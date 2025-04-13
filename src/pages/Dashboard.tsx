@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHabits } from '@/context/HabitContext';
 import { useAuth } from '@/context/AuthContext';
+import { useAchievements } from '@/context/AchievementContext';
 import Navbar from '@/components/Navbar';
 import HabitItem from '@/components/HabitItem';
 import HabitForm from '@/components/HabitForm';
@@ -9,11 +11,13 @@ import ProgressSummary from '@/components/ProgressSummary';
 import HabitRecommendations from '@/components/HabitRecommendations';
 import { HabitType } from '@/types/habit';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Trophy } from 'lucide-react';
+import AchievementBadge from '@/components/AchievementBadge';
 
 const Dashboard: React.FC = () => {
   const { habits, loading, addHabit, getRecommendations } = useHabits();
   const { user, isLoading } = useAuth();
+  const { unlockedAchievements } = useAchievements();
   const navigate = useNavigate();
   
   const [isHabitFormOpen, setIsHabitFormOpen] = useState(false);
@@ -54,6 +58,14 @@ const Dashboard: React.FC = () => {
     setIsHabitFormOpen(false);
   };
   
+  // Get the 3 most recent achievements
+  const recentAchievements = unlockedAchievements
+    .sort((a, b) => {
+      if (!a.unlockedAt || !b.unlockedAt) return 0;
+      return b.unlockedAt.getTime() - a.unlockedAt.getTime();
+    })
+    .slice(0, 3);
+  
   if (isLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -83,14 +95,53 @@ const Dashboard: React.FC = () => {
           <div className="md:col-span-2">
             <ProgressSummary />
           </div>
-          <div className="bg-accent/50 rounded-lg p-4 flex flex-col justify-center items-center">
-            <h2 className="text-lg font-medium mb-2">Quick Tips</h2>
-            <ul className="text-sm space-y-2">
-              <li>• Start small with achievable habits</li>
-              <li>• Be consistent and track daily</li>
-              <li>• Celebrate your streaks</li>
-              <li>• Focus on building one habit at a time</li>
-            </ul>
+          <div className="bg-accent/50 rounded-lg p-4 flex flex-col">
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="text-lg font-medium">Achievements</h2>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/achievements')}
+                className="text-sm"
+              >
+                View All
+              </Button>
+            </div>
+            
+            {recentAchievements.length > 0 ? (
+              <div className="flex flex-col gap-3">
+                {recentAchievements.map(achievement => (
+                  <div 
+                    key={achievement.id} 
+                    className="flex items-center gap-3 p-2 bg-background/60 rounded-md"
+                  >
+                    <AchievementBadge achievement={achievement} size="sm" />
+                    <span className="text-sm font-medium">{achievement.title}</span>
+                  </div>
+                ))}
+                
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/achievements')}
+                  className="mt-2 gap-2"
+                >
+                  <Trophy className="h-4 w-4" />
+                  <span>All Achievements</span>
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center flex-1 text-center">
+                <Trophy className="h-8 w-8 text-muted-foreground mb-2" />
+                <p className="text-sm mb-2">Complete habits to unlock achievements</p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate('/achievements')}
+                >
+                  View Achievements
+                </Button>
+              </div>
+            )}
           </div>
         </div>
         
