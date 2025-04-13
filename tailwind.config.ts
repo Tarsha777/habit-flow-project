@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,19 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom colors for our habit app
+				habit: {
+					primary: "#9b87f5",
+					secondary: "#7E69AB",
+					tertiary: "#6E59A5",
+					dark: "#1A1F2C",
+					light: "#D6BCFA",
+				},
+				status: {
+					completed: "#10B981",
+					pending: "#F59E0B",
+					missed: "#EF4444",
 				}
 			},
 			borderRadius: {
@@ -84,11 +98,50 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'bounce-small': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-5px)' }
+				},
+				'pulse-light': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' }
+				},
+				'scale-in': {
+					'0%': {
+						transform: 'scale(0.95)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					}
+				},
+				'check-mark': {
+					'0%': {
+						height: '0',
+						width: '0',
+						opacity: '0'
+					},
+					'40%': {
+						height: '0',
+						width: '8px',
+						opacity: '1'
+					},
+					'100%': {
+						height: '16px',
+						width: '8px',
+						opacity: '1'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'bounce-small': 'bounce-small 1.5s ease-in-out infinite',
+				'pulse-light': 'pulse-light 2s ease-in-out infinite',
+				'scale-in': 'scale-in 0.2s ease-out',
+				'check-mark': 'check-mark 0.3s ease-in-out forwards'
 			}
 		}
 	},
