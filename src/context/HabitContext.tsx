@@ -1,8 +1,7 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { HabitType, FrequencyType } from '@/types/habit';
 import { v4 as uuidv4 } from 'uuid';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { format, isToday, isThisWeek, isThisMonth } from 'date-fns';
 
 interface HabitContextType {
@@ -23,7 +22,6 @@ const HabitContext = createContext<HabitContextType | undefined>(undefined);
 export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [habits, setHabits] = useState<HabitType[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
   
   useEffect(() => {
     // Load habits from localStorage
