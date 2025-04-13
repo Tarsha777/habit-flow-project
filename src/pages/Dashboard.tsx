@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHabits } from '@/context/HabitContext';
@@ -7,17 +6,32 @@ import Navbar from '@/components/Navbar';
 import HabitItem from '@/components/HabitItem';
 import HabitForm from '@/components/HabitForm';
 import ProgressSummary from '@/components/ProgressSummary';
+import HabitRecommendations from '@/components/HabitRecommendations';
 import { HabitType } from '@/types/habit';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  const { habits, loading } = useHabits();
+  const { habits, loading, addHabit, getRecommendations } = useHabits();
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   
   const [isHabitFormOpen, setIsHabitFormOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<HabitType | null>(null);
+  
+  // Get AI-powered habit recommendations
+  const recommendations = getRecommendations();
+  
+  // Handle recommendation selection
+  const handleAddRecommendation = (rec: any) => {
+    addHabit(
+      rec.name,
+      rec.description,
+      rec.frequency,
+      rec.color,
+      rec.icon
+    );
+  };
   
   // Check if user is authenticated
   React.useEffect(() => {
@@ -79,6 +93,14 @@ const Dashboard: React.FC = () => {
             </ul>
           </div>
         </div>
+        
+        {/* Show recommendations if no habits or if there are quality recommendations */}
+        {(habits.length === 0 || recommendations.length > 0) && (
+          <HabitRecommendations
+            recommendations={recommendations}
+            onAddHabit={handleAddRecommendation}
+          />
+        )}
         
         {habits.length === 0 ? (
           <div className="bg-background border-2 border-dashed border-border rounded-lg py-12 px-6 text-center">

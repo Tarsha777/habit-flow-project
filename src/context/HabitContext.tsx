@@ -3,6 +3,7 @@ import { HabitType, FrequencyType } from '@/types/habit';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/hooks/use-toast';
 import { format, isToday, isThisWeek, isThisMonth } from 'date-fns';
+import { getHabitRecommendations, HabitRecommendation } from '@/utils/recommendationEngine';
 
 interface HabitContextType {
   habits: HabitType[];
@@ -15,6 +16,7 @@ interface HabitContextType {
   getHabitsForToday: () => HabitType[];
   isHabitCompletedToday: (id: string) => boolean;
   getCompletionPercentage: () => number;
+  getRecommendations: () => HabitRecommendation[];
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
@@ -170,6 +172,11 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     return Math.round((completedCount / todayHabits.length) * 100);
   };
+
+  // New function to get habit recommendations
+  const getRecommendations = (): HabitRecommendation[] => {
+    return getHabitRecommendations(habits);
+  };
   
   return (
     <HabitContext.Provider
@@ -184,6 +191,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         getHabitsForToday,
         isHabitCompletedToday,
         getCompletionPercentage,
+        getRecommendations,
       }}
     >
       {children}
