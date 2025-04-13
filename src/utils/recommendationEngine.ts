@@ -56,7 +56,7 @@ const recommendationTemplates: HabitRecommendation[] = [
   },
   {
     name: 'Gratitude Journal',
-    description: 'Write down 3 things you're grateful for',
+    description: 'Write down 3 things you\'re grateful for',
     frequency: 'daily',
     category: HABIT_CATEGORIES.MINDFULNESS,
     icon: 'pen-line',
