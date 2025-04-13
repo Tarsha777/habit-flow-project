@@ -1,12 +1,18 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Button, ButtonProps } from "@/components/ui/button";
+import { Button, ButtonProps, buttonVariants } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
+import { useState } from "react";
 
-interface PlayfulButtonProps extends ButtonProps {
+// Define our playful variant without extending ButtonProps variant
+type PlayfulVariant = "playful";
+type ButtonVariant = ButtonProps["variant"];
+type CombinedVariant = ButtonVariant | PlayfulVariant;
+
+interface PlayfulButtonProps extends Omit<ButtonProps, "variant"> {
   showSparkle?: boolean;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "playful";
+  variant?: CombinedVariant;
 }
 
 const PlayfulButton = React.forwardRef<HTMLButtonElement, PlayfulButtonProps>(
@@ -56,6 +62,3 @@ const PlayfulButton = React.forwardRef<HTMLButtonElement, PlayfulButtonProps>(
 PlayfulButton.displayName = "PlayfulButton";
 
 export { PlayfulButton };
-
-// Need to import useState
-import { useState } from "react";
