@@ -112,3 +112,66 @@
 .streak-progress {
   @apply h-2 rounded-full bg-gradient-to-r from-habit-primary to-habit-tertiary transition-all duration-300;
 }
+
+/* Floating animation for background icons */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(10px) rotate(-5deg);
+  }
+}
+
+/* Pulse animation for interactive elements */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Pop animation for achievements and completions */
+@keyframes pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-all duration-300;
+}
+
+.card-hover:hover {
+  @apply shadow-lg transform -translate-y-1;
+}
+
+/* Interactive button effect */
+.interactive-btn {
+  @apply transition-all duration-300;
+}
+
+.interactive-btn:hover {
+  @apply transform scale-105;
+}
+
+.interactive-btn:active {
+  @apply transform scale-95;
+}

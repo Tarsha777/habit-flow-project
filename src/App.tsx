@@ -20,6 +20,7 @@ import Achievements from "./pages/Achievements";
 
 // Components
 import AchievementPopup from "./components/AchievementPopup";
+import FloatingIcons from "./components/FloatingIcons";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <AchievementPopup />
+            <FloatingIcons count={12} iconSet={['general', 'wellness']} className="opacity-[0.08] z-0" />
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
