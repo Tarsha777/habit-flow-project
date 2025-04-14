@@ -1,5 +1,5 @@
 
-import { HabitType, FrequencyType } from '@/types/habit';
+import { HabitType, FrequencyType, MoodEntry, MoodType } from '@/types/habit';
 
 // Types for recommendations
 export interface HabitRecommendation {
@@ -94,13 +94,55 @@ const recommendationTemplates: HabitRecommendation[] = [
     icon: 'target',
     color: '#E91E63', // pink
   },
+  // Mood-based recommendations
+  {
+    name: '5-Minute Walk Outside',
+    description: 'A quick walk to boost your energy and mood',
+    frequency: 'daily',
+    category: HABIT_CATEGORIES.HEALTH,
+    icon: 'footprints',
+    color: '#8BC34A', // light green
+  },
+  {
+    name: 'Deep Breathing',
+    description: '5 minutes of deep breathing to reduce stress',
+    frequency: 'daily',
+    category: HABIT_CATEGORIES.MINDFULNESS,
+    icon: 'wind',
+    color: '#00BCD4', // cyan
+  },
+  {
+    name: 'Creative Expression',
+    description: 'Draw, paint, or write creatively for 15 minutes',
+    frequency: 'daily',
+    category: HABIT_CATEGORIES.CREATIVITY,
+    icon: 'palette',
+    color: '#9C27B0', // purple
+  },
+  {
+    name: 'Connect with Someone',
+    description: 'Reach out to a friend or family member',
+    frequency: 'daily',
+    category: HABIT_CATEGORIES.MINDFULNESS,
+    icon: 'message-circle',
+    color: '#FF5722', // deep orange
+  },
+  {
+    name: 'Daily Affirmations',
+    description: 'Practice positive self-talk for confidence',
+    frequency: 'daily',
+    category: HABIT_CATEGORIES.MINDFULNESS,
+    icon: 'message-square-quote',
+    color: '#673AB7', // deep purple
+  },
 ];
 
 /**
- * Analyzes habits and provides recommendations based on user behavior
+ * Analyzes habits and moods to provide recommendations based on user behavior
  */
 export function getHabitRecommendations(
   currentHabits: HabitType[],
+  recentMoods: MoodEntry[] = [],
   limit: number = 3
 ): HabitRecommendation[] {
   // If user has no habits, suggest starter habits
@@ -119,9 +161,9 @@ export function getHabitRecommendations(
   // Extract habit names to avoid duplicates
   const existingHabitNames = currentHabits.map(h => h.name.toLowerCase());
   
-  // Analyze current habits (this is a simple version)
+  // Analyze current habits
   currentHabits.forEach(habit => {
-    // Infer category from habit name/description (simplified)
+    // Infer category from habit name/description
     let category = inferHabitCategory(habit);
     
     if (category) {
@@ -137,10 +179,108 @@ export function getHabitRecommendations(
     category => !categoryCount[category] || categoryCount[category] < 2
   );
   
-  // Prioritize recommendations
-  let recommendations = [...recommendationTemplates]
+  // Analyze mood trends for personalized recommendations
+  let moodBasedRecommendations: HabitRecommendation[] = [];
+  
+  if (recentMoods.length > 0) {
+    // Count occurrences of each mood
+    const moodCounts: Record<MoodType, number> = {
+      happy: 0,
+      sad: 0,
+      neutral: 0,
+      excited: 0,
+      stressed: 0
+    };
+    
+    recentMoods.forEach(entry => {
+      moodCounts[entry.mood]++;
+    });
+    
+    // Find predominant mood
+    const predominantMood = Object.entries(moodCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([mood]) => mood as MoodType)[0];
+    
+    // Suggest habits based on mood
+    switch (predominantMood) {
+      case 'sad':
+        moodBasedRecommendations = [
+          {
+            name: '5-Minute Walk Outside',
+            description: 'A quick walk can boost your mood and energy',
+            frequency: 'daily',
+            category: HABIT_CATEGORIES.HEALTH,
+            icon: 'footprints',
+            color: '#8BC34A',
+          },
+          {
+            name: 'Connect with Someone',
+            description: 'Reaching out to a friend can improve your mood',
+            frequency: 'daily',
+            category: HABIT_CATEGORIES.MINDFULNESS,
+            icon: 'message-circle',
+            color: '#FF5722',
+          }
+        ];
+        break;
+      case 'stressed':
+        moodBasedRecommendations = [
+          {
+            name: 'Deep Breathing',
+            description: 'Take 5 minutes for deep breathing to reduce stress',
+            frequency: 'daily',
+            category: HABIT_CATEGORIES.MINDFULNESS,
+            icon: 'wind',
+            color: '#00BCD4',
+          },
+          {
+            name: 'Digital Detox',
+            description: 'Take a 30-minute break from screens',
+            frequency: 'daily',
+            category: HABIT_CATEGORIES.MINDFULNESS,
+            icon: 'smartphone-off',
+            color: '#607D8B',
+          }
+        ];
+        break;
+      case 'neutral':
+        moodBasedRecommendations = [
+          {
+            name: 'Creative Expression',
+            description: 'Draw, paint, or write creatively for 15 minutes',
+            frequency: 'daily',
+            category: HABIT_CATEGORIES.CREATIVITY,
+            icon: 'palette',
+            color: '#9C27B0',
+          }
+        ];
+        break;
+      default:
+        // For happy or excited, suggest maintaining those positive habits
+        moodBasedRecommendations = [
+          {
+            name: 'Gratitude Journal',
+            description: 'Write down what you\'re grateful for to maintain positivity',
+            frequency: 'daily',
+            category: HABIT_CATEGORIES.MINDFULNESS,
+            icon: 'pen-line',
+            color: '#4CAF50',
+          }
+        ];
+    }
+  }
+  
+  // Combine all recommendations, prioritizing mood-based ones
+  let recommendations = [
+    ...moodBasedRecommendations, 
+    ...recommendationTemplates
+  ]
     // Remove habits the user already has
     .filter(rec => !existingHabitNames.includes(rec.name.toLowerCase()))
+    // Remove duplicates
+    .filter((rec, index, self) => 
+      index === self.findIndex(r => r.name === rec.name)
+    )
     // Sort by prioritizing underrepresented categories
     .sort((a, b) => {
       const aIsUnderrepresented = underrepresentedCategories.includes(a.category);

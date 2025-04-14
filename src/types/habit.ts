@@ -1,6 +1,14 @@
 
 export type FrequencyType = 'daily' | 'weekly' | 'monthly';
 
+export type MoodType = 'happy' | 'neutral' | 'sad' | 'excited' | 'stressed';
+
+export interface MoodEntry {
+  date: Date;
+  mood: MoodType;
+  note?: string;
+}
+
 export interface HabitType {
   id: string;
   name: string;

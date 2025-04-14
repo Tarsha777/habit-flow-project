@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHabits } from '@/context/HabitContext';
 import { useAuth } from '@/context/AuthContext';
@@ -9,6 +9,9 @@ import HabitItem from '@/components/HabitItem';
 import HabitForm from '@/components/HabitForm';
 import ProgressSummary from '@/components/ProgressSummary';
 import HabitRecommendations from '@/components/HabitRecommendations';
+import MoodTracker from '@/components/MoodTracker';
+import SmartReminders from '@/components/SmartReminders';
+import MoodTrends from '@/components/MoodTrends';
 import { HabitType } from '@/types/habit';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Trophy } from 'lucide-react';
@@ -91,6 +94,12 @@ const Dashboard: React.FC = () => {
           </Button>
         </div>
         
+        {/* Smart Reminders */}
+        <SmartReminders />
+        
+        {/* Mood Tracker */}
+        <MoodTracker />
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="md:col-span-2">
             <ProgressSummary />
@@ -143,6 +152,11 @@ const Dashboard: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+        
+        {/* Mood Trends */}
+        <div className="mb-8">
+          <MoodTrends />
         </div>
         
         {/* Show recommendations if no habits or if there are quality recommendations */}
