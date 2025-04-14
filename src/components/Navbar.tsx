@@ -1,19 +1,27 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { Calendar, BarChart2, Settings, LogOut } from 'lucide-react';
+import { Calendar, BarChart2, Settings, LogOut, BookOpen } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
     <nav className="bg-white py-4 px-6 shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <span className="text-2xl font-bold bg-gradient-to-r from-habit-primary to-habit-tertiary bg-clip-text text-transparent">
+          <span 
+            className="text-2xl font-bold bg-gradient-to-r from-habit-primary to-habit-tertiary bg-clip-text text-transparent cursor-pointer"
+            onClick={() => navigate('/dashboard')}
+          >
             HabitFlow
           </span>
         </div>
@@ -21,7 +29,7 @@ const Navbar: React.FC = () => {
         {user ? (
           <div className="flex items-center gap-4">
             <Button 
-              variant="ghost" 
+              variant={isActive('/dashboard') ? 'default' : 'ghost'}
               className="flex items-center gap-1" 
               onClick={() => navigate('/dashboard')}
             >
@@ -30,7 +38,7 @@ const Navbar: React.FC = () => {
             </Button>
             
             <Button 
-              variant="ghost" 
+              variant={isActive('/calendar') ? 'default' : 'ghost'}
               className="flex items-center gap-1" 
               onClick={() => navigate('/calendar')}
             >
@@ -39,7 +47,16 @@ const Navbar: React.FC = () => {
             </Button>
             
             <Button 
-              variant="ghost" 
+              variant={isActive('/journal') ? 'default' : 'ghost'}
+              className="flex items-center gap-1" 
+              onClick={() => navigate('/journal')}
+            >
+              <BookOpen className="h-5 w-5 text-habit-primary" />
+              <span className="hidden md:inline">Journal</span>
+            </Button>
+            
+            <Button 
+              variant={isActive('/settings') ? 'default' : 'ghost'}
               className="flex items-center gap-1" 
               onClick={() => navigate('/settings')}
             >
