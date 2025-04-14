@@ -2,50 +2,100 @@
 import React from 'react';
 import { useHabits } from '@/context/HabitContext';
 import { HabitType } from '@/types/habit';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from 'date-fns';
+import { 
+  format, 
+  startOfMonth, 
+  endOfMonth, 
+  eachDayOfInterval, 
+  isSameDay,
+  isToday,
+  isPast 
+} from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { 
+  Calendar as CalendarComponent,
+  CalendarProps 
+} from '@/components/ui/calendar';
+import { CheckCheck, AlertTriangle, Calendar } from 'lucide-react';
 
 interface HabitCalendarProps {
   habit: HabitType;
+  selectedDate: Date | null;
+  onSelectDate: (date: Date) => void;
 }
 
-const HabitCalendar: React.FC<HabitCalendarProps> = ({ habit }) => {
-  const [currentMonth, setCurrentMonth] = React.useState(new Date());
+const HabitCalendar: React.FC<HabitCalendarProps> = ({ 
+  habit, 
+  selectedDate,
+  onSelectDate 
+}) => {
+  const { isHabitCompletedOnDate } = useHabits();
   
-  const startDate = startOfMonth(currentMonth);
-  const endDate = endOfMonth(currentMonth);
-  const daysInMonth = eachDayOfInterval({ start: startDate, end: endDate });
+  // Calculate current streak and total completions
+  const totalCompletions = habit.completedDates.length;
   
-  const getDayStatus = (day: Date) => {
-    // Check if the habit was completed on this day
-    const isCompleted = habit.completedDates.some(date => isSameDay(date, day));
-    
-    // Today or past day
-    const isToday = isSameDay(day, new Date());
-    const isPast = day < new Date() && !isToday;
+  // Get habit completion state for each day
+  const getDayHabitState = (date: Date) => {
+    const isCompleted = habit.completedDates.some(completedDate => 
+      isSameDay(completedDate, date)
+    );
     
     if (isCompleted) return "completed";
-    if (isPast) return "missed";
-    if (isToday) return "pending";
-    return "";
+    if (isPast(date) && !isToday(date)) return "missed";
+    if (isToday(date)) return "today";
+    return "future";
   };
   
-  const previousMonth = () => {
-    setCurrentMonth(prevMonth => {
-      const newMonth = new Date(prevMonth);
-      newMonth.setMonth(newMonth.getMonth() - 1);
-      return newMonth;
-    });
+  // Custom day renderer for the calendar
+  const renderDay = (day: Date, selectedDay: Date | undefined, dayProps: React.HTMLAttributes<HTMLDivElement>) => {
+    const habitState = getDayHabitState(day);
+    
+    return (
+      <div
+        {...dayProps}
+        className={cn(
+          dayProps.className,
+          "relative flex items-center justify-center",
+          {
+            "bg-status-completed/20 text-status-completed font-medium hover:bg-status-completed/30": 
+              habitState === "completed",
+            "border border-status-missed/30": 
+              habitState === "missed",
+            "bg-status-pending/10 text-status-pending font-medium hover:bg-status-pending/20": 
+              habitState === "today",
+            "hover:bg-accent/50": 
+              habitState === "future"
+          }
+        )}
+      >
+        {format(day, "d")}
+        {habitState === "completed" && (
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2">
+            <div className="w-1 h-1 bg-status-completed rounded-full"></div>
+          </div>
+        )}
+      </div>
+    );
   };
   
-  const nextMonth = () => {
-    setCurrentMonth(prevMonth => {
-      const newMonth = new Date(prevMonth);
-      newMonth.setMonth(newMonth.getMonth() + 1);
-      return newMonth;
-    });
+  // Day modifier for the calendar
+  const modifiers = {
+    completed: (date: Date) => habit.completedDates.some(completedDate => 
+      isSameDay(completedDate, date)
+    ),
+    missed: (date: Date) => 
+      isPast(date) && 
+      !isToday(date) && 
+      !habit.completedDates.some(completedDate => isSameDay(completedDate, date)),
+    today: (date: Date) => isToday(date),
+  };
+  
+  const modifiersClassNames = {
+    completed: "bg-status-completed/20 text-status-completed font-medium hover:bg-status-completed/30",
+    missed: "border border-status-missed/30",
+    today: "bg-status-pending/10 text-status-pending font-medium hover:bg-status-pending/20",
   };
   
   return (
@@ -57,54 +107,21 @@ const HabitCalendar: React.FC<HabitCalendarProps> = ({ habit }) => {
             <Badge variant="outline" className="font-normal">
               Streak: {habit.streak}
             </Badge>
+            <Badge variant="outline" className="font-normal">
+              Total: {totalCompletions}
+            </Badge>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between items-center mb-4">
-          <button 
-            onClick={previousMonth}
-            className="text-sm p-1 hover:bg-accent rounded-md"
-          >
-            &lt; Prev
-          </button>
-          <h3 className="font-medium">{format(currentMonth, 'MMMM yyyy')}</h3>
-          <button 
-            onClick={nextMonth}
-            className="text-sm p-1 hover:bg-accent rounded-md"
-          >
-            Next &gt;
-          </button>
-        </div>
-        
-        <div className="grid grid-cols-7 gap-1 text-center">
-          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
-            <div key={day} className="text-xs font-medium py-1">
-              {day}
-            </div>
-          ))}
-          
-          {/* Generate empty cells for days before the start of the month */}
-          {Array.from({ length: startDate.getDay() }).map((_, i) => (
-            <div key={`empty-${i}`} className="h-8" />
-          ))}
-          
-          {/* Calendar days */}
-          {daysInMonth.map((day) => {
-            const status = getDayStatus(day);
-            return (
-              <div 
-                key={day.toString()} 
-                className={cn(
-                  "calendar-day",
-                  status
-                )}
-              >
-                {format(day, 'd')}
-              </div>
-            );
-          })}
-        </div>
+        <CalendarComponent 
+          mode="single"
+          selected={selectedDate || undefined}
+          onSelect={(date) => date && onSelectDate(date)}
+          className="rounded-md border"
+          modifiers={modifiers}
+          modifiersClassNames={modifiersClassNames}
+        />
         
         <div className="flex justify-center mt-4 text-xs gap-4">
           <div className="flex items-center gap-1">

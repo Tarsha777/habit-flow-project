@@ -17,6 +17,7 @@ import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Achievements from "./pages/Achievements";
+import Journal from "./pages/Journal";
 
 // Components
 import AchievementPopup from "./components/AchievementPopup";
@@ -41,6 +42,7 @@ const App = () => (
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/calendar" element={<Calendar />} />
+                <Route path="/journal" element={<Journal />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/achievements" element={<Achievements />} />
                 <Route path="*" element={<NotFound />} />
