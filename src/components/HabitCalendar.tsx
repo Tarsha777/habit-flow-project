@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useHabits } from '@/context/HabitContext';
 import { HabitType } from '@/types/habit';
@@ -38,9 +37,7 @@ const HabitCalendar: React.FC<HabitCalendarProps> = ({
   
   // Get habit completion state for each day
   const getDayHabitState = (date: Date) => {
-    const isCompleted = habit.completedDates.some(completedDate => 
-      isSameDay(completedDate, date)
-    );
+    const isCompleted = isHabitCompletedOnDate(habit.id, date);
     
     if (isCompleted) return "completed";
     if (isPast(date) && !isToday(date)) return "missed";
@@ -119,8 +116,19 @@ const HabitCalendar: React.FC<HabitCalendarProps> = ({
           selected={selectedDate || undefined}
           onSelect={(date) => date && onSelectDate(date)}
           className="rounded-md border"
-          modifiers={modifiers}
-          modifiersClassNames={modifiersClassNames}
+          modifiers={{
+            completed: (date: Date) => isHabitCompletedOnDate(habit.id, date),
+            missed: (date: Date) => 
+              isPast(date) && 
+              !isToday(date) && 
+              !isHabitCompletedOnDate(habit.id, date),
+            today: (date: Date) => isToday(date),
+          }}
+          modifiersClassNames={{
+            completed: "bg-status-completed/20 text-status-completed font-medium hover:bg-status-completed/30",
+            missed: "border border-status-missed/30",
+            today: "bg-status-pending/10 text-status-pending font-medium hover:bg-status-pending/20",
+          }}
         />
         
         <div className="flex justify-center mt-4 text-xs gap-4">

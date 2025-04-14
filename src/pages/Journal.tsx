@@ -66,7 +66,7 @@ const Journal: React.FC = () => {
                   <p className="text-center py-8 text-muted-foreground">
                     You haven't written a journal entry for today.
                   </p>
-                  <Button variant="playful" showSparkle className="w-full">
+                  <Button variant="default" className="w-full bg-gradient-to-r from-habit-primary to-habit-tertiary hover:opacity-95">
                     Write Today's Entry
                   </Button>
                 </CardContent>

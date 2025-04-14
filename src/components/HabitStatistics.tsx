@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { HabitType } from '@/types/habit';
 import { useHabits } from '@/context/HabitContext';
@@ -113,6 +112,19 @@ const HabitStatistics: React.FC<HabitStatisticsProps> = ({ habits, selectedDate 
   // Colors for charts
   const COLORS = ['#9b87f5', '#7E69AB', '#6E59A5', '#10B981', '#F59E0B', '#EF4444'];
   
+  // Custom tooltip component for Recharts
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background border border-border p-2 rounded shadow-sm">
+          <p className="text-xs font-medium">{label}</p>
+          <p className="text-xs text-primary">{`${payload[0].name}: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+    return null;
+  };
+  
   return (
     <div className="space-y-6">
       {selectedDate ? (
@@ -172,15 +184,7 @@ const HabitStatistics: React.FC<HabitStatisticsProps> = ({ habits, selectedDate 
                 <BarChart data={weeklyData}>
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <ChartTooltip
-                    content={(props) => (
-                      <ChartTooltipContent
-                        {...props}
-                        formatter={(value, name) => [value, 'Habits Completed']}
-                        labelFormatter={(value) => `${value}`}
-                      />
-                    )}
-                  />
+                  <Tooltip content={<CustomTooltip />} />
                   <Bar dataKey="completed" fill="var(--color-completed)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ChartContainer>
@@ -208,9 +212,7 @@ const HabitStatistics: React.FC<HabitStatisticsProps> = ({ habits, selectedDate 
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip
-                      formatter={(value) => [`${value} habits`, 'Count']}
-                    />
+                    <Tooltip content={<CustomTooltip />} />
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>
@@ -238,14 +240,7 @@ const HabitStatistics: React.FC<HabitStatisticsProps> = ({ habits, selectedDate 
                 <LineChart data={streakData}>
                   <XAxis dataKey="date" tick={{ fontSize: 10 }} interval={6} />
                   <YAxis />
-                  <ChartTooltip
-                    content={(props) => (
-                      <ChartTooltipContent
-                        {...props}
-                        formatter={(value, name) => [value, 'Habits Completed']}
-                      />
-                    )}
-                  />
+                  <Tooltip content={<CustomTooltip />} />
                   <Line 
                     type="monotone" 
                     dataKey="completed" 

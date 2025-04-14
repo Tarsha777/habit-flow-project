@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { HabitType, FrequencyType } from '@/types/habit';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/hooks/use-toast';
-import { format, isToday, isThisWeek, isThisMonth } from 'date-fns';
+import { format, isToday, isThisWeek, isThisMonth, isSameDay } from 'date-fns';
 import { getHabitRecommendations, HabitRecommendation } from '@/utils/recommendationEngine';
 
 interface HabitContextType {
@@ -15,6 +15,7 @@ interface HabitContextType {
   getHabitStreak: (id: string) => number;
   getHabitsForToday: () => HabitType[];
   isHabitCompletedToday: (id: string) => boolean;
+  isHabitCompletedOnDate: (id: string, date: Date) => boolean;
   getCompletionPercentage: () => number;
   getRecommendations: () => HabitRecommendation[];
 }
@@ -178,6 +179,16 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return getHabitRecommendations(habits);
   };
   
+  // Add the missing function
+  const isHabitCompletedOnDate = (id: string, date: Date) => {
+    const habit = habits.find(h => h.id === id);
+    if (!habit) return false;
+    
+    return habit.completedDates.some(completedDate => 
+      isSameDay(completedDate, date)
+    );
+  };
+
   return (
     <HabitContext.Provider
       value={{
@@ -190,6 +201,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         getHabitStreak,
         getHabitsForToday,
         isHabitCompletedToday,
+        isHabitCompletedOnDate,
         getCompletionPercentage,
         getRecommendations,
       }}
