@@ -4,36 +4,53 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 250 25% 98%;
-    --foreground: 222 47% 11%;
+:root {
+    /* Cosmic Light Mode (for contrast when needed) */
+    --background: 230 35% 7%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 230 30% 10%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 230 30% 10%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 262 83% 75%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 280 100% 70%;
+    --primary-foreground: 230 35% 7%;
 
-    --secondary: 262 60% 54%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 240 100% 75%;
+    --secondary-foreground: 230 35% 7%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 230 25% 15%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 262 40% 92%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 320 100% 75%;
+    --accent-foreground: 230 35% 7%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 262 83% 75%;
+    --border: 230 25% 18%;
+    --input: 230 25% 15%;
+    --ring: 280 100% 70%;
 
-    --radius: 0.5rem;
+    /* Cosmic Theme Colors */
+    --cosmic-void: 230 35% 7%;
+    --cosmic-deep: 240 30% 12%;
+    --cosmic-nebula: 280 100% 70%;
+    --cosmic-stardust: 240 100% 75%;
+    --cosmic-aurora: 320 100% 75%;
+    --cosmic-constellation: 200 100% 80%;
+    --cosmic-moonlight: 60 100% 85%;
+    --cosmic-solar: 30 100% 70%;
+
+    /* Gradients */
+    --gradient-cosmic: linear-gradient(135deg, hsl(var(--cosmic-void)), hsl(var(--cosmic-deep)));
+    --gradient-nebula: linear-gradient(45deg, hsl(var(--cosmic-nebula)), hsl(var(--cosmic-aurora)));
+    --gradient-stardust: linear-gradient(180deg, hsl(var(--cosmic-stardust)), hsl(var(--cosmic-constellation)));
+    --gradient-meditation: radial-gradient(circle, hsl(var(--cosmic-nebula) / 0.3), hsl(var(--cosmic-void)));
+
+    --radius: 1rem;
   }
 
   .dark {
@@ -174,4 +191,170 @@
 
 .interactive-btn:active {
   @apply transform scale-95;
+}
+
+/* Cosmic Animations */
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateX(20px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(20px) rotate(-360deg);
+  }
+}
+
+@keyframes nebulaPulse {
+  0%, 100% {
+    background-size: 100% 100%;
+    opacity: 0.7;
+  }
+  50% {
+    background-size: 110% 110%;
+    opacity: 0.9;
+  }
+}
+
+@keyframes planetGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--cosmic-nebula) / 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--cosmic-nebula) / 0.8), 0 0 60px hsl(var(--cosmic-aurora) / 0.4);
+  }
+}
+
+@keyframes starField {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-2000px);
+  }
+}
+
+@keyframes moodOrb {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-100px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* Cosmic UI Classes */
+.cosmic-background {
+  background: var(--gradient-cosmic);
+  position: relative;
+  overflow: hidden;
+}
+
+.cosmic-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, hsl(var(--cosmic-nebula) / 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, hsl(var(--cosmic-aurora) / 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, hsl(var(--cosmic-stardust) / 0.05) 0%, transparent 50%);
+  animation: nebulaPulse 8s ease-in-out infinite;
+}
+
+.cosmic-card {
+  @apply backdrop-blur-sm border border-white/10;
+  background: linear-gradient(135deg, hsl(var(--card) / 0.8), hsl(var(--cosmic-deep) / 0.6));
+  box-shadow: 0 8px 32px hsl(var(--cosmic-void) / 0.3);
+}
+
+.cosmic-button {
+  @apply relative overflow-hidden;
+  background: var(--gradient-nebula);
+  transition: all 0.3s ease;
+}
+
+.cosmic-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsl(var(--cosmic-moonlight) / 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.cosmic-button:hover::before {
+  left: 100%;
+}
+
+.planet-habit {
+  @apply relative rounded-full transition-all duration-500;
+  animation: planetGlow 3s ease-in-out infinite;
+}
+
+.planet-habit.completed {
+  background: var(--gradient-stardust);
+  box-shadow: 0 0 30px hsl(var(--cosmic-constellation) / 0.6);
+}
+
+.planet-habit.incomplete {
+  background: hsl(var(--muted));
+  box-shadow: 0 0 10px hsl(var(--muted) / 0.3);
+}
+
+.mood-orb {
+  @apply rounded-full cursor-pointer transition-all duration-300;
+  background: var(--gradient-nebula);
+  box-shadow: 0 4px 20px hsl(var(--cosmic-aurora) / 0.4);
+}
+
+.mood-orb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px hsl(var(--cosmic-aurora) / 0.6);
+}
+
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: hsl(var(--cosmic-moonlight));
+  border-radius: 50%;
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+.constellation-map {
+  @apply relative;
+  background: radial-gradient(circle, hsl(var(--cosmic-void) / 0.9), hsl(var(--cosmic-deep)));
+}
+
+.meditation-timer {
+  @apply relative;
+  background: var(--gradient-meditation);
+  border-radius: 50%;
+  animation: nebulaPulse 4s ease-in-out infinite;
 }

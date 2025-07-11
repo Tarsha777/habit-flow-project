@@ -63,6 +63,23 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
+				// Cosmic theme colors
+				cosmic: {
+					void: 'hsl(var(--cosmic-void))',
+					deep: 'hsl(var(--cosmic-deep))',
+					nebula: 'hsl(var(--cosmic-nebula))',
+					stardust: 'hsl(var(--cosmic-stardust))',
+					aurora: 'hsl(var(--cosmic-aurora))',
+					constellation: 'hsl(var(--cosmic-constellation))',
+					moonlight: 'hsl(var(--cosmic-moonlight))',
+					solar: 'hsl(var(--cosmic-solar))',
+				},
+				gradient: {
+					cosmic: 'var(--gradient-cosmic)',
+					nebula: 'var(--gradient-nebula)',
+					stardust: 'var(--gradient-stardust)',
+					meditation: 'var(--gradient-meditation)',
+				},
 				// Custom colors for our habit app
 				habit: {
 					primary: "#9b87f5",
@@ -133,6 +150,22 @@ export default {
 						width: '8px',
 						opacity: '1'
 					}
+				},
+				'star-twinkle': {
+					'0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
+					'50%': { opacity: '1', transform: 'scale(1.2)' }
+				},
+				'orbit': {
+					'0%': { transform: 'rotate(0deg) translateX(20px) rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg) translateX(20px) rotate(-360deg)' }
+				},
+				'nebula-pulse': {
+					'0%, 100%': { backgroundSize: '100% 100%', opacity: '0.7' },
+					'50%': { backgroundSize: '110% 110%', opacity: '0.9' }
+				},
+				'planet-glow': {
+					'0%, 100%': { boxShadow: '0 0 20px hsl(var(--cosmic-nebula) / 0.5)' },
+					'50%': { boxShadow: '0 0 40px hsl(var(--cosmic-nebula) / 0.8), 0 0 60px hsl(var(--cosmic-aurora) / 0.4)' }
 				}
 			},
 			animation: {
@@ -141,7 +174,11 @@ export default {
 				'bounce-small': 'bounce-small 1.5s ease-in-out infinite',
 				'pulse-light': 'pulse-light 2s ease-in-out infinite',
 				'scale-in': 'scale-in 0.2s ease-out',
-				'check-mark': 'check-mark 0.3s ease-in-out forwards'
+				'check-mark': 'check-mark 0.3s ease-in-out forwards',
+				'star-twinkle': 'star-twinkle 3s ease-in-out infinite',
+				'orbit': 'orbit 10s linear infinite',
+				'nebula-pulse': 'nebula-pulse 8s ease-in-out infinite',
+				'planet-glow': 'planet-glow 3s ease-in-out infinite'
 			}
 		}
 	},
